@@ -1,0 +1,7 @@
+---
+title: "Practice9_EDA"
+author: "Anaadi Pooran"
+format: pdf
+editor: visual
+---
+

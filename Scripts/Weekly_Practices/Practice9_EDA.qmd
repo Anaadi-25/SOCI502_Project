@@ -27,15 +27,38 @@ library(here)
 setwd("../../") #Finding file location
 getwd()
 ```
-```{r}
-#cleaned_data <- 
-  #read_csv("cleaned_data.csv") #Reading data from csv file store in folder
 
+```{r}
+####Read and Show Cleaned Data###
 cleaned_data <- 
   read_csv(here("Inputs", "cleaned_data.csv"))
+
+cleaned_data
 ```
 ```{r}
-#cleaned_data
+###Cleaning Column Names in Data###
+
+cleaned_data <-
+cleaned_data |>
+  as_tibble() |>
+  clean_names() |>
+  mutate(
+    Country = ref_area_label,
+    Year = time_period,
+    GHG_emissions = obs_value
+    ) 
+
+```
+```{r}
+###Updating cleaned_data file###
+
+write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
+```
+
+
+
+```{r}
+###
 
 head(cleaned_data)
 
@@ -43,9 +66,9 @@ tail(cleaned_data)
 
 cleaned_data |> slice_sample(n=10)
 
-glimpse(cleaned_data)
+glimpse(cleaned_data) 
 
-summary(cleaned_data)
+summary(cleaned_data) #Summary of data statistics
 ```
 
 

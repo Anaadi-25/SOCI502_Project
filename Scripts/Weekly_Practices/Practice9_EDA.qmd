@@ -5,3 +5,47 @@ format: pdf
 editor: visual
 ---
 
+```{r}
+###Load Packages###
+
+#install.packages("httr") 
+#install.packages("janitor")
+#install.packages("validate")
+#install.packages("here")
+
+library(httr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(validate)
+library(readr)
+library(here)
+```
+
+```{r}
+setwd("../../") #Finding file location
+getwd()
+```
+```{r}
+#cleaned_data <- 
+  #read_csv("cleaned_data.csv") #Reading data from csv file store in folder
+
+cleaned_data <- 
+  read_csv(here("Inputs", "cleaned_data.csv"))
+```
+```{r}
+#cleaned_data
+
+head(cleaned_data)
+
+tail(cleaned_data)
+
+cleaned_data |> slice_sample(n=10)
+
+glimpse(cleaned_data)
+
+summary(cleaned_data)
+```
+
+

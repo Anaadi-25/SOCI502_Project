@@ -12,7 +12,9 @@ editor: visual
 #install.packages("janitor")
 #install.packages("validate")
 #install.packages("here")
+install.packages("ggrepel")
 
+library(ggrepel)
 library(httr)
 library(tidyverse)
 library(dplyr)
@@ -35,6 +37,7 @@ cleaned_data <-
 
 cleaned_data
 ```
+
 ```{r}
 ###Cleaning Column Names in Data###
 
@@ -49,16 +52,15 @@ cleaned_data |>
     ) 
 
 ```
+
 ```{r}
 ###Updating cleaned_data file###
 
 write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 ```
 
-
-
 ```{r}
-###
+###Using popular functions to get a look at the data###
 
 head(cleaned_data)
 
@@ -71,4 +73,57 @@ glimpse(cleaned_data)
 summary(cleaned_data) #Summary of data statistics
 ```
 
+```{r}
+###Plotting a line graph###
+top5 <- cleaned_data |>
+  group_by(Country) |>
+  filter(Year == max(Year)) |>
+  slice_max(GHG_emissions, n = 5)
 
+cleaned_data |>
+  ggplot(aes(
+    x = Year,
+    y = GHG_emissions,
+    group = Country
+  )) +
+  geom_line(alpha = 0.2) +
+  geom_text(
+    data = top5,
+    aes(label = Country)
+  ) +
+  theme_minimal()
+```
+
+From the graph it was found that these is data for the "World", this makes it very difficult to read the graph since it is the total of all the countries. The data will be further cleaned to exclude the World data and then a line graph will be re created.
+
+```{r}
+### Cleaning data to remove "World" data values###
+
+cleaned_data <- cleaned_data |>
+  filter(Country != "World")
+
+write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
+```
+
+```{r}
+###Re-plotting the line graph without World data ###
+
+top5 <- cleaned_data |>
+  group_by(Country) |>
+  filter(Year == max(Year)) |>
+  slice_max(GHG_emissions, n = 5)
+
+cleaned_data |>
+  ggplot(aes(
+    x = Year,
+    y = GHG_emissions,
+    group = Country
+  )) +
+  geom_line(alpha = 0.2) +
+  geom_text(
+    data = top5,
+    aes(label = Country)
+  ) +
+  theme_minimal()
+
+```

@@ -1,5 +1,36 @@
 ---
-title: "Project_Milestone2_APooran"
-format: html
+title: "A Comparison of the Greenhouse Gas (GHG) Emissions Generated from Agrifood Systems for the Top 5 Producing Countries from 2001 to 2021"
+subtitle: "Project Milestone 1"
+author: "Anaadi Pooran"
+format:
+  pdf:
+    font: 8
+    code-overflow: wrap #Included to prevent code from overflowing of the page
+    geometry:
+      - margin=0.75in
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}} 
+editor: visual
+execute:
+  echo: true #Include all code and output
+  output: true #Includes text results and figures
+  warning: false #Suppress code warnings
+  message: false #Suppress code messages
 ---
+
+1. Clean Data
+  1.1 Get unedited data from file 
+  1.2 Clean data (take of world section)
+  
+2. Test Data
+ 2.2 Test data 
+ 
+3. EDA 
+ 3.3 Do EDA  to see data
+ 3.4 Do three graphs 
+ 
+ 4. Surprising Notes on the Data
+  4.4 Make notes
 

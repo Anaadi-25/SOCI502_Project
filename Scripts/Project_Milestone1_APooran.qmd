@@ -1,0 +1,149 @@
+---
+title: "A Comparison of the Greenhouse Gas (GHG) Emissions Generated from Agrifood Systems for the Top 5 Producing Countries from 2001 to 2021"
+subtitle: "Project Milestone 1"
+author: "Anaadi Pooran"
+format:
+  pdf:
+    font: 8
+    code-overflow: wrap #Included to prevent code from overflowing of the page
+    geometry:
+      - margin=0.75in
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}} 
+editor: visual
+execute:
+  echo: true #Include all code and output
+  output: true #Includes text results and figures
+  warning: false #Suppress code warnings
+  message: false #Suppress code messages
+---
+
+## Question
+
+How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 producing countries differ and change over the 20 year period from 2001 to 2021?
+
+## Data Source
+
+An API from the World Bank that contains a dataset sourced from the Food and Agriculture Organization of the United Nations (FAO) on GHG emissions from agrifood systems for countries around the world will be used as the source of data to answer the question. More information about this dataset is linked [here](https://data360.worldbank.org/en/indicator/FAO_EMSTOT_6518?view=map).
+
+## Simulation Code & Data Structure
+
+Simulated data will be used to create a data frame of GHG emissions data from agrifood systems for all countries from 2001 to 2021. Wide data format will be used.
+
+```{r}
+###Load Packages###
+
+#install.packages("tidyverse")
+#install.packages("countrycode") 
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(countrycode) #Used to get the list of countries for the simulated data
+```
+
+```{r}
+### Create Data Frame###
+
+set.seed(7) # Set seed so that the randomness is reproducible
+
+countries <- codelist$country.name.en # Rename list of countries
+years <- 2001:2021 # Label column from year 2001 to 2021
+
+GHGemissionsCountries_SimData <- data.frame( # Create data frame 
+  country = rep(countries, each = length(years)),# Create country rows 
+  year = rep(years, times = length(countries)), # Create year columns
+  GHG_emissions = sample(2:3000000, length(countries) * length(years), replace = TRUE) # Randomly assign GHG emission for each countries cross each year
+) |>
+  pivot_wider(names_from = year, values_from = GHG_emissions) # Produce wide data
+
+head(GHGemissionsCountries_SimData) # Show first 6 rows of data frame
+
+```
+
+## Answer Statement & Simulated Graphs
+
+An answer to the question "How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 producing countries differ and change over the 20 year period from 2001 to 2021?" can be answered using two graphs:
+
+- A bar chart that compares the average GHG emissions from agrifood systems of the top 5 producing countries for the 20 year period.
+
+- A line graph that demonstrates the changes in GHG emissions from agrifood systems from the top 5 producing countries over the 20 year period from 2001 to 2021.
+
+These graphs will allow for information on which of the 5 countries produced the average highest and lowest GHG emissions from agrifood systems over the 20 year period. They will also provide information on how these countries GHG emissions from agrifood systems changed in regard to each other over the 20 years.
+
+The following steps uses the simulated data to demonstrate how these graphs can be created.
+
+1.  A new column will be added to the data frame to calculate the average GHG emissions from agrifood systems across the 20 year period.
+2.  The data will be trimmed to only include the countries with the top 5 highest averages over the 20 year period.
+3.  A bar chart of the top 5 countries producing GHG emissions from agrifood systems will be created using the average over the 20 year period to show the comparison between the averages.
+4.  A line graph of the top 5 countries producing GHG emissions from agrifood systems between 2001 to 2021 will be created to understand how their production compares to each other across the 20 year period.
+
+### Step 1
+
+```{r}
+### Add New Column to Simulated Data Frame###
+
+GHGemissionsCountries_SimData <- GHGemissionsCountries_SimData |> 
+  mutate(avg_GHG_emissions = rowMeans(across(`2001`:`2021`))) #Add new column with average GHG emissions over the 20 year period (2001 -2021)
+
+GHGemissionsCountries_SimData <- as_tibble(GHGemissionsCountries_SimData) # Creates table
+
+head(GHGemissionsCountries_SimData) # Displays first 6 rows of the table
+
+```
+
+### Step 2
+
+```{r}
+### Create Table of Top 5 Countries Producing the Highest GHG Emissions for Agrifoods systems###
+
+GHGemissionsTop5Countries_SimData <- GHGemissionsCountries_SimData |> 
+  slice_max(avg_GHG_emissions, n=5) # Data trimmed to only include the 5 countries with the highest averages
+
+GHGemissionsTop5Countries_SimData # Displays new table
+
+```
+
+### Step 3
+
+```{r}
+### Create Bar Chart of the Top 5 Countries Producing the Average Highest GHG Emissions from Agrifoods Systems Over the 20 Year Period###
+
+ggplot(GHGemissionsTop5Countries_SimData, aes(x = avg_GHG_emissions, y = country)) + # Specifies the mapping of the graph
+  geom_col() + # Used to create the bar chart
+  labs(
+    title = stringr::str_wrap(
+      "Average GHG Emissions from Agrifood systems for the Top 5 Countries",
+      width = 40), # Used to get graph title to fit in the graph space
+    x = "Country",
+    y = "Average GHG emissions", # Adjusts the labels on the graph
+  ) + 
+  theme_minimal()
+
+```
+
+### Step 4
+
+```{r}
+### Create a Line Graph of the Top 5 Countries Producing GHG emissions from Agrifood systems between 2001 to 2021###
+
+GHG_long <- GHGemissionsTop5Countries_SimData |> # Converts wide data to long data
+  pivot_longer(
+    cols = `2001`:`2021`,
+    names_to = "year",
+    values_to = "GHG_emissions"
+  ) |>
+  mutate(year = as.numeric(year))
+
+ggplot(GHG_long, aes(x = year, y = GHG_emissions, colour = country)) + # Create line graph
+  geom_line() +
+  labs(
+    title = "GHG Emissions of the Top 5 Countries",
+    x = "Year",
+    y = "GHG emissions",
+    colour = "Country"
+  )
+
+```

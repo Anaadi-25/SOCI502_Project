@@ -2,17 +2,6 @@
 title: "A Comparison of the Greenhouse Gas (GHG) Emissions Generated from Agrifood Systems for the Top 5 Producing Countries from 2001 to 2021"
 subtitle: "Project Milestone 1"
 author: "Anaadi Pooran"
-format:
-  pdf:
-    font: 8
-    code-overflow: wrap #Included to prevent code from overflowing of the page
-    geometry:
-      - margin=0.75in
-    include-in-header:
-      text: |
-        \usepackage{fvextra}
-        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}} 
-editor: visual
 execute:
   echo: true #Include all code and output
   output: true #Includes text results and figures
@@ -20,17 +9,32 @@ execute:
   message: false #Suppress code messages
 ---
 
-1. Clean Data
-  1.1 Get unedited data from file 
-  1.2 Clean data (take of world section)
-  
-2. Test Data
- 2.2 Test data 
- 
-3. EDA 
- 3.3 Do EDA  to see data
- 3.4 Do three graphs 
- 
- 4. Surprising Notes on the Data
-  4.4 Make notes
+1.  Clean Data
 
+- Get unedited data from file
+- Clean data (take of world section)
+
+2.  Test Data
+
+- Test data
+
+3.  EDA
+
+- Do EDA to see data
+- Do three graphs
+
+4.  Surprising Notes on the Data
+
+- Make notes
+
+## Question
+
+How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 producing countries differ and change over the 20 year period from 2001 to 2021?
+
+## Data Cleaning
+
+The data will be cleaned to only include relevant columns, that is those that show the country, year and amount of GHG emissions for agrifood systems produced for that year. Then the column names will be re-labelled. Also any irrelevant rows will be removed, such as world data as this is unrelated to the research question. Furthermore, only data between the relevant 20 year period, that is 2001 to 2021 will be kept. A csv file of the cleaned data will be created. 
+
+## Test the Data
+
+Then, the class of each column will be checked to ensure that values are of the right class. Further tests using "validator" will be done tot ensure that the data in each column adheres to certain rules. 

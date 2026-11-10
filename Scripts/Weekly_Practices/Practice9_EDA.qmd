@@ -75,11 +75,7 @@ summary(cleaned_data) #Summary of data statistics
 
 ```{r}
 ###Plotting a line graph###
-top5 <- cleaned_data |>
-  group_by(Country) |>
-  filter(Year == max(Year)) |>
-  slice_max(GHG_emissions, n = 5)
-
+    
 cleaned_data |>
   ggplot(aes(
     x = Year,
@@ -88,8 +84,15 @@ cleaned_data |>
   )) +
   geom_line(alpha = 0.2) +
   geom_text(
-    data = top5,
-    aes(label = Country)
+    data = cleaned_data |>
+      dplyr::group_by(Country) |>
+      dplyr::filter(Year == max(Year)),
+    aes(label = Country),
+    size = 2,
+    hjust = -0.1
+  ) +
+  scale_x_continuous(
+    expand = expansion(mult = c(0.01, 0.15))
   ) +
   theme_minimal()
 ```
@@ -108,11 +111,6 @@ write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 ```{r}
 ###Re-plotting the line graph without World data ###
 
-top5 <- cleaned_data |>
-  group_by(Country) |>
-  filter(Year == max(Year)) |>
-  slice_max(GHG_emissions, n = 5)
-
 cleaned_data |>
   ggplot(aes(
     x = Year,
@@ -121,8 +119,15 @@ cleaned_data |>
   )) +
   geom_line(alpha = 0.2) +
   geom_text(
-    data = top5,
-    aes(label = Country)
+    data = cleaned_data |>
+      dplyr::group_by(Country) |>
+      dplyr::filter(Year == max(Year)),
+    aes(label = Country),
+    size = 2,
+    hjust = -0.1
+  ) +
+  scale_x_continuous(
+    expand = expansion(mult = c(0.01, 0.15))
   ) +
   theme_minimal()
 

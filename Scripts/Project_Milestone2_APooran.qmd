@@ -33,8 +33,14 @@ How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 prod
 
 ## Data Cleaning
 
-The data will be cleaned to only include relevant columns, that is those that show the country, year and amount of GHG emissions for agrifood systems produced for that year. Then the column names will be re-labelled. Also any irrelevant rows will be removed, such as world data as this is unrelated to the research question. Furthermore, only data between the relevant 20 year period, that is 2001 to 2021 will be kept. A csv file of the cleaned data will be created. 
+The data will be cleaned to only include relevant columns, that is those that show the country, year and amount of GHG emissions for agrifood systems produced for that year. Then the column names will be re-labelled. Also any irrelevant rows will be removed, such as world data as this is unrelated to the research question. Furthermore, only data between the relevant 20 year period, that is 2001 to 2021 will be kept. 
 
-## Test the Data
+## Tests
 
-Then, the class of each column will be checked to ensure that values are of the right class. Further tests using "validator" will be done tot ensure that the data in each column adheres to certain rules. 
+Then, the class of each column will be checked to ensure that values are of the right class. Further tests using "validator" will be done to ensure that the data in each column adheres to certain rules. A csv file of the cleaned data will be created. 
+
+## Exploratory Data Analysis (EDA)
+
+Three exploratory graphs will be created to help better understand the data. First, a line graph of
+
+

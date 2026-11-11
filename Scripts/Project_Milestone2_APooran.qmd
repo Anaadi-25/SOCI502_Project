@@ -33,14 +33,124 @@ How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 prod
 
 ## Data Cleaning
 
-The data will be cleaned to only include relevant columns, that is those that show the country, year and amount of GHG emissions for agrifood systems produced for that year. Then the column names will be re-labelled. Also any irrelevant rows will be removed, such as world data as this is unrelated to the research question. Furthermore, only data between the relevant 20 year period, that is 2001 to 2021 will be kept. 
+The data will be cleaned to only include relevant columns, that is those that show the country, year and amount of GHG emissions for agrifood systems produced for that year. Then the column names will be re-labeled. Also any irrelevant rows will be removed, such as World and South Asia data as these are not countries and are unrelated to the research question. Furthermore, only data between the relevant 20 year period, that is 2001 to 2021 will be kept. 
+
+```{r}
+### Load Packages ###
+ 
+#install.packages("tidyverse")
+
+library(tidyverse)
+library(dplyr)
+library(countrycode)
+
+```
+
+```{r}
+###Reading CSV File & Viewing Data###
+
+unedited_data <-
+  read_csv("../Inputs/unedited_data.csv") #Reading data from csv file store in folder
+
+head (unedited_data) #Viewing top 6 rows
+tail (unedited_data) #Viewing bottom 6 rows
+```
+```{r}
+###Cleaning Data to Include Only Relevant Columns###
+ 
+cleaned_data <- 
+   select(unedited_data, 
+         REF_AREA_LABEL, 
+         TIME_PERIOD, 
+         OBS_VALUE) 
+
+head(cleaned_data)
+```
+```{r}
+###Relabeling Column Names in the Cleaned Data ###
+
+cleaned_data <-
+cleaned_data |>
+  as_tibble() |>
+  clean_names() |>
+  mutate(
+    Country = ref_area_label,
+    Year = time_period,
+    GHG_Emissions_Kilotonnes = obs_value
+    ) |>
+  select(Country, Year, GHG_Emissions_Kilotonnes)
+
+head(cleaned_data)
+```
+```{r}
+### Filtering the Data to Only include Country Data ###
+
+countries <- codelist |>
+  select(country.name.en)
+
+cleaned_data <- cleaned_data |>
+  filter(Country %in% countries$country.name.en)
+
+cleaned_data
+ 
+```
+```{r}
+### Filtering Data to only includes the years from 2001 to 2020###
+
+cleaned_data <- cleaned_data |>
+  filter(Year %in% 2001:2021)
+
+cleaned_data
+
+```
+
 
 ## Tests
 
 Then, the class of each column will be checked to ensure that values are of the right class. Further tests using "validator" will be done to ensure that the data in each column adheres to certain rules. A csv file of the cleaned data will be created. 
 
+```{r}
+### Load Packages###
+
+#install.packages("validate")
+#install.packages("janitor")
+
+library(ggplot2)
+library(validate)
+library(janitor)
+
+```
+
+```{r}
+### Test to check the class of all columns###
+
+class(cleaned_data$Country) 
+class(cleaned_data$Year)
+class(cleaned_data$GHG_Emissions_Kilotonnes)
+
+```
+```{r}
+###Test to check if data in columns adheres to certain rules###
+
+rules <- validator(
+  is.numeric(Year), #Checking if the column is numeric
+  is.character(Country), #Checking if the column a character
+  is.numeric(GHG_Emissions_Kilotonnes), #Checking if the column is numeric
+  Year %in% 2000:2021, # Checking if the years between 2001:2021
+  Country %in% countries$country.name.en #Checking that all the countries name are accurate
+)
+
+out <-
+  confront(cleaned_data, rules)
+summary(out) 
+
+```
+
+
 ## Exploratory Data Analysis (EDA)
 
 Three exploratory graphs will be created to help better understand the data. First, a line graph of
 
+## Notes on Surprises in the Data
 
+The first thing that surprised me was that the data had world data and some other non-country data such as data for South Asia. When graphs for EDA was done during the weekly practices the values for these categories either skewed the graph, int he case of the world data which was the total values for all the countries or made it difficult to figure out the top producing countries, int he case of South Asia which ranked relatively high but consisted of data from numerous counties in South Asia. As such only country data based on the country list was include for EDA in this assignment. 

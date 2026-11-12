@@ -138,7 +138,7 @@ write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 
 ```
 
-## Exploratory Data Analysis (EDA)
+## Exploratory Data Analysis (EDA) (NB: be sure to label graphs, eg. Fig 1 etc.)
 
 Three exploratory graphs will be created to help better understand the data. First, a line graph of the GHG Emission for all the countries. This will broadly demonstrate which countries are the top GHG emissions for agri-food systems. Once the top 5 countries are identified, a bar graph of the top 5 highest producers for GHG emissions for agrifood systems for each year from 2001 to 2021 will be created, to show how across the 20 year period GHG emissions varied for these countries. Lastly, a graph of the average amount GHG emissions for agrifoods systems  over the 20 year period for the top 5 producing countries will be plotted, this will illustrate which country produces the overall highest about of GHG emissions for agrifood systems. 
 
@@ -207,3 +207,5 @@ cleaned_data |>
 ## Notes on Surprises in the Data
 
 The first thing that surprised me was that the data had world data and some other non-country data such as data for South Asia. When graphs for EDA was done during the weekly practices the values for these categories either skewed the graph, int he case of the world data which was the total values for all the countries or made it difficult to figure out the top producing countries, int he case of South Asia which ranked relatively high but consisted of data from numerous counties in South Asia. As such only country data based on the country list was include for EDA in this assignment.
+
+Also surprising was that once the line graph of all the countries was plotted it was very easy to identify which countries were the to 5 producers of GHG emissions for agrifood systems. They were quite apparent from the line graph and so further analysis like creating wide data from the cleaned data and calculating the average GHG emissions for agrifoods systems for each country to figure out which countries had a highest values over the 20 year period was unnecessary. 

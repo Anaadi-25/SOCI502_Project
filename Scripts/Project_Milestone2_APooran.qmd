@@ -145,6 +145,12 @@ out <-
 summary(out) 
 
 ```
+```{r}
+###Create CSV File of Cleaned Data ###
+
+write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
+
+```
 
 
 ## Exploratory Data Analysis (EDA)

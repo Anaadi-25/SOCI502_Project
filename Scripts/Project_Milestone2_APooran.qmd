@@ -246,8 +246,7 @@ ggplot(change_top5, aes(x = reorder(Country, Change), y = Change, fill = Directi
   scale_y_continuous(labels = scales::comma) +
   scale_fill_manual(values = c("Increase" = "firebrick", "Decrease" = "steelblue")) +
   labs(
-    title = "Change in GHG Emissions Between 2001 and 2021",
-    subtitle = "Top 5 emitting countries",
+    title = "Change in GHG Emissions Between 2001 and 2021 for Top 5 Emitting Countries",
     x = NULL,
     y = "Change in Emissions (Kilotonnes)",
     fill = NULL

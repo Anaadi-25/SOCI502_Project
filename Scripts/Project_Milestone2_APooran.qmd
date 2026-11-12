@@ -140,7 +140,7 @@ write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 
 ## Exploratory Data Analysis (EDA)
 
-Three exploratory graphs will be created to help better understand the data. First, a line graph of the GHG Emission for all the countries. Then,
+Three exploratory graphs will be created to help better understand the data. First, a line graph of the GHG Emission for all the countries. This will broadly demonstrate which countries are the top GHG emissions for agri-food systems. Once the top 5 countries are identified, a bar graph of the top 5 highest producers for GHG emissions for agrifood systems for each year from 2001 to 2021 will be created, to show how across the 20 year period GHG emissions varied for these countries. Lastly, a graph of the average amount GHG emissions for agrifoods systems  over the 20 year period for the top 5 producing countries will be plotted, this will illustrate which country produces the overall highest about of GHG emissions for agrifood systems. 
 
 ```{r}
 ### Load Packages###

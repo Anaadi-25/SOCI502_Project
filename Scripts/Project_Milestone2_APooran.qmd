@@ -113,6 +113,23 @@ class(cleaned_data$Year)
 class(cleaned_data$GHG_Emissions_Kilotonnes)
 
 ```
+```{r}
+### Checking that all the country names in the data matches in the country names in the list###
+
+if (all(unique(countries) %in% cleaned_data$Country)) {
+  "The cleaned countries match the expected countries"
+} else {
+  "Not all of the countries match the expected countries"
+}
+  
+```
+```{r}
+### Test to check which countries in the list are not in the cleaned data###
+setdiff(
+  unique(countries$country.name.en),
+  unique(cleaned_data$Country)
+)
+```
 
 ```{r}
 ###Test to check if data in columns adheres to certain rules###
@@ -122,7 +139,7 @@ rules <- validator(
   is.character(Country), #Checking if the column a character
   is.numeric(GHG_Emissions_Kilotonnes), #Checking if the column is numeric
   Year %in% 2001:2021, # Checking if the years between 2001:2021
-  Country %in% countries$country.name.en #Checking that all the countries name are accurate
+  Country %in% countries$country.name.en #Checking that all the countries names are in the country list
 )
 
 out <-
@@ -131,12 +148,14 @@ summary(out)
 
 ```
 
+
 ```{r}
 ###Create CSV File of Cleaned Data###
 
 write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 
 ```
+
 
 ## Exploratory Data Analysis (EDA) (NB: be sure to label graphs, eg. Fig 1 etc.)
 
@@ -182,6 +201,12 @@ summary(cleaned_data)
 ```{r}
 ###Plotting a line graph###
     
+label_data <- cleaned_data |>
+  group_by(Country) |>
+  slice_max(Year, n = 1, with_ties = FALSE) |>
+  ungroup() |>
+  slice_max(GHG_Emissions_Kilotonnes, n = 5)
+
 cleaned_data |>
   ggplot(aes(
     x = Year,
@@ -189,16 +214,18 @@ cleaned_data |>
     group = Country
   )) +
   geom_line(alpha = 0.2) +
-  geom_text(
-    data = cleaned_data |>
-      dplyr::group_by(Country) |>
-      dplyr::filter(Year == max(Year)),
-    aes(label = Country),
-    size = 2,
-    hjust = -0.1
+  geom_text_repel(
+    data = label_data,
+    aes(
+      x = Year,
+      y = GHG_Emissions_Kilotonnes,
+      label = Country
+    )
   ) +
-  scale_x_continuous(
-    expand = expansion(mult = c(0.01, 0.15))
+  labs(
+    title = "Greenhouse Gas Emissions by Country Over Time",
+    x = "Year",
+    y = "GHG Emissions (Kilotonnes)"
   ) +
   theme_minimal()
 
@@ -257,6 +284,20 @@ ggplot(change_top5, aes(x = reorder(Country, Change), y = Change, fill = Directi
 
 ## Notes on Surprises in the Data
 
+There were a number of surprises in the data that were found. These have been included below under the sub-categories of each stage where they were found. 
+
+### Data Cleaning
+
 The first thing that surprised me was that the data had world data and some other non-country data such as data for South Asia. When graphs for EDA was done during the weekly practices the values for these categories either skewed the graph, int he case of the world data which was the total values for all the countries or made it difficult to figure out the top producing countries, int he case of South Asia which ranked relatively high but consisted of data from numerous counties in South Asia. As such only country data based on the country list was include for EDA in this assignment.
 
-Also surprising was that once the line graph of all the countries was plotted it was very easy to identify which countries were the to 5 producers of GHG emissions for agrifood systems. They were quite apparent from the line graph and so further analysis like creating wide data from the cleaned data and calculating the average GHG emissions for agrifoods systems for each country to figure out which countries had a highest values over the 20 year period was unnecessary. 
+### Tests
+
+In the test that checks whether the country names in the cleaned data aligns with the countries in the list it was found that, not all the countries in the cleaned data aligned with the country in the list. This was surprising, however the other test using validate confirmed that all the countries in the clean data were on the country list but not all the countries in the list was in the cleaned data.The other tests
+
+These to text were enough to deduce that there were no unreal countries or errors in the country names. It was also enough to deduce that not all of the countries were included in the cleaned data and therefore the original unedited data. The following analysis is therefore limited by the countries that were included in the unedited data. 
+
+### EDA (Exploratory Data Analysis)
+
+Also surprising was that once the line graph of all the countries was plotted it was very easy to identify which countries were the to 5 producers of GHG emissions for agrifood systems. They were quite apparent from the line graph and so further analysis like creating wide data from the cleaned data and calculating the average GHG emissions for agrifoods systems for each country to figure out which countries had a highest values over the 20 year period, a step that was in the original plan, was no longer necessary. 
+
+Additionally, in regards to the line graph the final version that is shown only includes the country labels for the 5 top countries, previous versions of the graph included all the country labels however, they were difficult to read. After a few trials editing the code and being unsuccessful in finding a was to clearly show all the country labels, the decision was made to only include the labels for the top 5 countries producing the highest GHG emissions for agrifood systems. This decision was made given that the research question is only concerned with the top 5 producing countries and so it make sense to do this in this context, however should others want to use this graph late outside of this context it may not be as useful to them. 

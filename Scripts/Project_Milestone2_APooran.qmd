@@ -307,10 +307,11 @@ Once the line graph of all the countries was plotted it was surprisingly very ea
 
 Additionally, in regards to the line graph the final version that is shown only includes the country labels for the 5 top countries, previous versions of the graph included all the country labels however, they were difficult to read. After a few trials editing the code and being unsuccessful in finding a was to clearly show all the country labels, the decision was made to only include the labels for the top 5 countries producing the highest GHG emissions for agrifood systems. This decision was made given that the research question is only concerned with the top 5 producing countries and so it makes sense to do this in this context, however should others want to use this graph outside of this context it may not be as useful to them.
 
-Also, surprising about the data was that 
+Also, surprising about the data was that from the two bar charts, Brazil whose average GHG emissions for agrifood systems were the second highest also reduced their production the most between 2021 and 2001. This was quite surprising and figuring out how this was done will be particular useful in the data story. 
 
+## Conclusion
 
-### Conclusion
+Project Milestone 2 attempted to clean, test and do EDA on data of GHG emissions from agrifood systems to answer the question of "How does greenhouse gas (GHG) emissions from agrifood systems for the top 5 producing countries differ and change over the 20 year period from 2001 to 2021?". Throughout the process of cleaning, testing and doing EDA on the data a number of surprising findings about the data surfaced, ranging from missing countries in the cleaned data because of a mismatch in country name to an interesting trend about Brazil's GHG emissions for agrifood systems over the 20 year period. Overall, this exercise set the stage for creating the future data story to answer the question that seeks to understand how GHG emissions for agrifood systems for the top 5 producing countries differs and change between 2001 and 2021. 
 
 
 

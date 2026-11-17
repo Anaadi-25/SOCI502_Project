@@ -11,7 +11,7 @@ execute:
 
 ## Introduction
 
-The following document is separated into 3 major sections, Data Cleaning, Tests and EDA (Exploratory Data Analysis). For each section, a explanation of the analysis to be done and its intent is highlighted at the beginning. This is followed by a subsection with code and output which has as embedded notes on what the code is doing. Lastly, a notes subsection for each of the major sections delves into what was surprising about the data and/or analyses. Prior to delving into these major sections, a subsection of the introduction highlights the research question for reference. A conclusion section is also included to summarize the analysis and findings. 
+The following document is separated into 3 major sections, Data Cleaning, Tests and EDA (Exploratory Data Analysis). For each section, a explanation of the analysis to be done and its intent is highlighted at the beginning. This is followed by a subsection with code and output which has as embedded notes on what the code is doing. Lastly, a notes subsection for each of the major sections delve into what was surprising about the data and/or analyses. Prior to delving into these major sections, a subsection of the introduction highlights the research question for reference. A conclusion section is also included to summarize the analysis and findings. 
 
 ### Question
 
@@ -24,10 +24,11 @@ The data will be cleaned to only include relevant columns, that is those that sh
 ### 1.1 Code & Output
 
 ```{r}
-### Load Packages###
+### Load packages###
  
 #install.packages("tidyverse")
 #install.packages("janitor")
+#install.packages("countrycode")
 
 library(tidyverse)
 library(dplyr)
@@ -37,7 +38,7 @@ library(janitor)
 ```
 
 ```{r}
-###Reading CSV File & Viewing Data###
+###Reading CSV file and viewing the data###
 
 unedited_data <-
   read_csv("../Inputs/unedited_data.csv") #Reading data from csv file stored in folder
@@ -47,7 +48,7 @@ tail (unedited_data) #Viewing bottom 6 rows
 ```
 
 ```{r}
-###Cleaning Data to Include Only Relevant Columns###
+###Cleaning the data to include only relevant columns###
  
 cleaned_data <- 
    select(unedited_data, # Referencing the unedited data
@@ -59,32 +60,32 @@ head(cleaned_data) # Viewing the top 6 rows of the selected data
 ```
 
 ```{r}
-###Relabeling Column Names in the Cleaned Data###
+###Relabeling column names in the cleaned data###
 
 cleaned_data <-
 cleaned_data |>
   as_tibble() |>
   clean_names() |>
   mutate(
-    Country = ref_area_label,
-    Year = time_period,
-    GHG_Emissions_Kilotonnes = obs_value
+    Country = ref_area_label, #Renaming country column
+    Year = time_period, #Renaming year column
+    GHG_Emissions_Kilotonnes = obs_value #Renaming year GHG emissions column
     ) |>
   select(Country, Year, GHG_Emissions_Kilotonnes)
 
-head(cleaned_data)
+head(cleaned_data) #Showing data with renamed columns
 ```
 
 ```{r}
-### Filtering the Data to Only include Country Data###
+### Filtering the data to only include country data###
 
 countries <- codelist |>
-  select(country.name.en)
+  select(country.name.en) # Creating a list of country names 
 
 cleaned_data <- cleaned_data |>
-  filter(Country %in% countries$country.name.en)
+  filter(Country %in% countries$country.name.en) #Filtering the data so only countries in the list are included
 
-cleaned_data
+cleaned_data #Showing the cleaned data
  
 ```
 
@@ -92,19 +93,20 @@ cleaned_data
 ### Filtering Data to only includes the years from 2001 to 2021###
 
 cleaned_data <- cleaned_data |>
-  filter(Year %in% 2001:2021)
+  filter(Year %in% 2001:2021) # Only including rows with the year from 2001 to 2021
 
-cleaned_data
+cleaned_data #Showing the cleaned data
 
 ```
 
 ### 1.2 Notes
 
-The first thing that was surprising was that the data had World data and some other non-country data such as data for South Asia. When graphs for EDA was done during the weekly practices the values for these categories either skewed the graph, int he case of the world data which was the total values for all the countries or made it difficult to figure out the top producing countries, int he case of South Asia which ranked relatively high but consisted of data from numerous counties in South Asia. As such only country data based on the country list was include for EDA in this assignment.
+The first thing that was surprising was that the data had World data and some other non-country data such as data for South Asia. When graphs for EDA was done during the weekly practices the values for these categories either skewed the graph, in the case of the World data which was the total values for all the countries, or made it difficult to figure out the top producing countries, in the case of South Asia which ranked relatively high but consisted of data from numerous countries in South Asia. As such only country data based on the country names from the country list that was derived from the countrycode library was used. However, as seen in the next section, due to small differences in country names, between this list and the naming of countries in the unedited data
+many country data from the unedited data was excluded from the cleaned data.  
 
 ## 2 Tests
 
-Then, the class of each column will be checked to ensure that values are of the right class. Further tests using "validator" will be done to ensure that the data in each column adheres to certain rules. A csv file of the cleaned data will be created.
+The class of each column will be checked to ensure that values are of the right class. Next, a test to check whether the country names in the country list derived from the country code library matches the country names in the cleaned data will be done. Further tests using "validator" will be used to ensure that the data in each column adheres to certain rules. An additional test will be used to show which countries in the country list are not (if any) included in the cleaned data. Finally, a csv file of the cleaned data will be created.
 
 ### 2.1 Code & Output
 
@@ -120,9 +122,9 @@ library(validate)
 ```{r}
 ### Test to check the class of all columns###
 
-class(cleaned_data$Country) 
-class(cleaned_data$Year)
-class(cleaned_data$GHG_Emissions_Kilotonnes)
+class(cleaned_data$Country) #Checking the class of the country column
+class(cleaned_data$Year) #Checking the class if the year column
+class(cleaned_data$GHG_Emissions_Kilotonnes) #Checking the class of the GHG emissions column
 
 ```
 
@@ -130,9 +132,9 @@ class(cleaned_data$GHG_Emissions_Kilotonnes)
 ### Checking that all the country names in the data matches in the country names in the list###
 
 if (all(unique(countries) %in% cleaned_data$Country)) {
-  "The cleaned countries match the expected countries"
+  "The expected countries match with the list of countries in the cleaned data"
 } else {
-  "Not all of the countries match the expected countries"
+  "Not all of the expected countries match with the countries in the cleaned data"
 }
   
 ```
@@ -140,8 +142,8 @@ if (all(unique(countries) %in% cleaned_data$Country)) {
 ```{r}
 ### Test to check which countries in the list are not in the cleaned data###
 setdiff(
-  unique(countries$country.name.en),
-  unique(cleaned_data$Country)
+  unique(countries$country.name.en), #Countries in the expected country list
+  unique(cleaned_data$Country) #Countries in the cleaned data 
 )
 ```
 
@@ -158,7 +160,7 @@ rules <- validator(
 
 out <-
   confront(cleaned_data, rules)
-summary(out) 
+summary(out) #Gives a summary of the results of the tests
 
 ```
 
@@ -170,12 +172,12 @@ write.csv(cleaned_data, "cleaned_data.csv", row.names = FALSE)
 ```
 
 ### 2.2 Notes
-In the test that checks whether the country names in the cleaned data aligns with the countries in the list it was found that, not all the countries in the cleaned data aligned with the country in the list. This was surprising, however the other test using validate confirmed that all the countries in the clean data were on the country list but not all the countries in the list was in the cleaned data.The other test listed the countries in the on the list that were not in the cleaned data. Surprisingly there were many popular countries that were excluded and a quick skim of the unedited data showed that as a result of variation in names, for example "Venezuela" in the list vs "Venezuela, RB" in the edited data, many countries were excluded in the data cleaning process. However, at this stage it was decided that these countries would be left out instead of further cleaning the data to include them. This decision was made as none of the countries excluded are likely candidates for being in the top 5 countries producing GHG emission for agrifood systems. Thefefore, their irrelevance to the research question at this point in this means that the cleaned data was not adjusted to include these countries. However, in future, that is in the data story data cleaning may follow another process to ensure countries with data are not left out.
+In the test that checks whether the country names in the cleaned data aligns with the countries in the expected country list it was found that, not all the countries in the cleaned data aligned with the countries in the expected country list. This was surprising, however the other test using validate confirmed that all the countries in the clean data were on the country list but not all the countries in the list was in the cleaned data.The other test listed the expected countries on the list that were not in the cleaned data. Surprisingly there were many popular countries that were excluded and a quick skim of the unedited data showed that as a result of variation in names, for example "Venezuela" in the expected list vs "Venezuela, RB" in the edited data, many countries were excluded in the data cleaning process. However, at this stage it was decided that these countries would be left out instead of further cleaning the data to include them. This decision was made as none of the countries excluded are likely candidates for being in the top 5 countries producing GHG emission for agrifood systems. Therefore, their irrelevance to the research question at this point,  means that the cleaned data was not adjusted to include these countries. However, in future, that is in the data story, data cleaning may follow another process to ensure countries with data are not left out.
 
 
 ## 3 Exploratory Data Analysis (EDA) 
 
-After using popular functions to look at the data, three exploratory graphs will be created to help better understand the data. First, a line graph of the GHG Emission for all the countries. This will broadly demonstrate which countries are the top GHG emissions for agri-food systems. Once the top 5 countries are identified, a graph of the average amount GHG emissions for agrifoods systems over the 20 year period for the top 5 producing countries will be plotted, this will illustrate which country produces the overall highest amount of GHG emissions for agrifood systems. Lastly, a bar chart showing the net difference in GHG emissions in agrifood systems for the top 5 producing countries between 2001 and 2021 will be plot. This will illustrate how much countries increased or decreased their overall GHG emissions for agrifood systems over 20 year period.
+After using popular functions to look at the data, three exploratory graphs will be created to help better understand the data. First, a line graph of the GHG Emission for all the countries. This will broadly demonstrate which countries are the top 5 producers of GHG emissions for agri-food systems. Once the top 5 producers are identified, a graph of the average amount GHG emissions for agrifoods systems over the 20 year period for the top 5 producing countries will be plotted, this will illustrate which country produces the overall highest amount of GHG emissions for agrifood systems. Lastly, a bar chart showing the net difference in GHG emissions in agrifood systems for the top 5 producing countries between 2001 and 2021 will be plot. This will illustrate how much countries increased or decreased their overall GHG emissions for agrifood systems over the 20 year period.
 
 ### 3.1 Code & Output
 
@@ -195,87 +197,87 @@ library(ggrepel)
 ### Reading Cleaned Data from the CSV file###
 
 cleaned_data <-
-  read_csv("../Inputs/cleaned_data.csv")
+  read_csv("../Inputs/cleaned_data.csv") #Reading csv for cleaned data
 
-cleaned_data
+cleaned_data #Showing the cleaned data
 
 ```
 
 ```{r}
 ###Using popular functions to get a look at the data###
 
-head(cleaned_data)
+head(cleaned_data) #Showing the first 6 rows of cleaned data
 
-tail(cleaned_data)
+tail(cleaned_data) #Showing the last 6 rows of cleaned data
 
 cleaned_data |>
-  slice_sample(n = 5)
+  slice_sample(n = 5) #Showing a section containing 5 rows of cleaned data
 
-glimpse(cleaned_data) 
+glimpse(cleaned_data) #Showing an overview of the cleaned dataframe
 
-summary(cleaned_data)
+summary(cleaned_data) #Showing summary data of the cleaned data
 ```
 
 ```{r}
 ###Plotting a line graph###
     
-label_data <- cleaned_data |>
+label_data <- cleaned_data |> #Creating data for labels using the top 5 countriesproducing GHG eimssions
   group_by(Country) |>
   slice_max(Year, n = 1, with_ties = FALSE) |>
   ungroup() |>
   slice_max(GHG_Emissions_Kilotonnes, n = 5)
 
-cleaned_data |>
-  ggplot(aes(
+cleaned_data |> #Creating line graph 
+  ggplot(aes( 
     x = Year,
     y = GHG_Emissions_Kilotonnes,
     group = Country
   )) +
   geom_line(alpha = 0.2) +
-  geom_text_repel(
-    data = label_data,
+  geom_text_repel( #Preventing text from overlapping in the labels
+    data = label_data, #Including the previously created data for labels for the top 5 countries
     aes(
-      x = Year,
-      y = GHG_Emissions_Kilotonnes,
-      label = Country
+      x = Year, #Assigning x axis data
+      y = GHG_Emissions_Kilotonnes, #Assigning y axis data
+      label = Country #Assigning label data
     )
   ) +
-  labs(
-    title = "Greenhouse Gas Emissions by Country Over Time",
-    x = "Year",
-    y = "GHG Emissions (Kilotonnes)"
+  labs(  
+    title = "Greenhouse Gas Emissions by Country Over Time",#Adding a graph title
+    x = "Year", #Renaming x axis
+    y = "GHG Emissions (Kilotonnes)" #Renaming y axis
   ) +
   theme_minimal()
 
 ```
 
 ```{r}
-### Bar Graph of Mean Agrifood Systems GHG Emissions for Top 5 Emitting Countries Between 2001 and 2021###
+### Bar average GHG Emissions for agrifood systems for the top 5 producing countries between 2001 and 2021###
 
-top5 <- c("China", "Brazil", "India", "United States", "Indonesia")
+top5 <- c("China", "Brazil", "India", "United States", "Indonesia") #Establishing the top 5 countries
 
-mean_top5 <- cleaned_data |>
+mean_top5 <- cleaned_data |> #Calculating the average GHG emissions over the 20 year period for the top 5 producing countries
   filter(Country %in% top5) |>
   group_by(Country) |>
   summarise(Mean_Emissions = mean(GHG_Emissions_Kilotonnes, na.rm = TRUE))
 
-ggplot(mean_top5, aes(x = reorder(Country, Mean_Emissions), y = Mean_Emissions, fill = Country)) +
+ggplot(mean_top5, aes(x = reorder(Country, Mean_Emissions), y = Mean_Emissions, fill = Country)) + #Creating a bar chart using the mean data previously created
   geom_col() +
   coord_flip() +
   labs(
-    title = "Mean Agrifood Systems GHG Emissions for Top 5 Emitting Countries Between 2001 and 2021",
-    x = NULL,
-    y = "Mean Emissions (Kilotonnes)"
+    title = "Average GHG Emissions for Agrifood Systems for the Top 5 Producing Countries Between 2001 and 2021", #Adding a graph title
+    x = NULL, #Assigning x axis data
+    y = "Average Emissions (Kilotonnes)" #Assigning y axis data
   ) +
   theme_minimal() 
 ```
 
 ```{r}
-### Bar Chart Showing the Net Difference in GHG Emissions in Agrifood Systems for the Top 5 Producing Countries between 2001 and 2021###
+### Bar chart showing the net difference in GHG emissions in agrifood systems for the top 5 producing countries between 2021 and 2001###
 
-change_top5 <- cleaned_data |>
+change_top5 <- cleaned_data |> #Creating data that showing the difference in GHG emission for the top 5 producing countries between 2021 and 2001
   filter(Country %in% top5, Year %in% c(2001, 2021)) |>
-  pivot_wider(
+  pivot_wider( #Creating wide data format
     names_from = Year,
     values_from = GHG_Emissions_Kilotonnes,
     names_prefix = "y"
@@ -285,13 +287,13 @@ change_top5 <- cleaned_data |>
     Direction = ifelse(Change >= 0, "Increase", "Decrease")
   )
 
-ggplot(change_top5, aes(x = reorder(Country, Change), y = Change, fill = Direction)) +
+ggplot(change_top5, aes(x = reorder(Country, Change), y = Change, fill = Direction)) + #Creating the bar chart form the previously created wide data
   geom_col() +
   coord_flip() +
   scale_y_continuous(labels = scales::comma) +
-  scale_fill_manual(values = c("Increase" = "firebrick", "Decrease" = "steelblue")) +
-  labs(
-    title = "Change in GHG Emissions Between 2001 and 2021 for Top 5 Emitting Countries",
+  scale_fill_manual(values = c("Increase" = "firebrick", "Decrease" = "steelblue")) + #Adding color to distinguished between increase and decrease
+  labs( #Adding graph title and labels to axis 
+    title = "Change in GHG Emissions Between 2021 and 2001 for Top 5 Producing Countries",
     x = NULL,
     y = "Change in Emissions (Kilotonnes)",
     fill = NULL
@@ -301,9 +303,12 @@ ggplot(change_top5, aes(x = reorder(Country, Change), y = Change, fill = Directi
 
 ### 3.2 Notes
 
-Also surprising was that once the line graph of all the countries was plotted it was very easy to identify which countries were the to 5 producers of GHG emissions for agrifood systems. They were quite apparent from the line graph and so further analysis like creating wide data from the cleaned data and calculating the average GHG emissions for agrifoods systems for each country to figure out which countries had a highest values over the 20 year period, a step that was in the original plan, was no longer necessary.
+Once the line graph of all the countries was plotted it was surprisingly very easy to identify which countries were the to 5 producers of GHG emissions for agrifood systems. They were quite apparent from the line graph and so further analysis like creating wide data from the cleaned data and calculating the average GHG emissions for agrifoods systems for each country to figure out which countries had a highest values over the 20 year period, a step that was in the original plan, was no longer necessary.
 
-Additionally, in regards to the line graph the final version that is shown only includes the country labels for the 5 top countries, previous versions of the graph included all the country labels however, they were difficult to read. After a few trials editing the code and being unsuccessful in finding a was to clearly show all the country labels, the decision was made to only include the labels for the top 5 countries producing the highest GHG emissions for agrifood systems. This decision was made given that the research question is only concerned with the top 5 producing countries and so it make sense to do this in this context, however should others want to use this graph late outside of this context it may not be as useful to them.
+Additionally, in regards to the line graph the final version that is shown only includes the country labels for the 5 top countries, previous versions of the graph included all the country labels however, they were difficult to read. After a few trials editing the code and being unsuccessful in finding a was to clearly show all the country labels, the decision was made to only include the labels for the top 5 countries producing the highest GHG emissions for agrifood systems. This decision was made given that the research question is only concerned with the top 5 producing countries and so it makes sense to do this in this context, however should others want to use this graph outside of this context it may not be as useful to them.
+
+Also, surprising about the data was that 
+
 
 ### Conclusion
 
